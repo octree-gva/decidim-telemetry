@@ -1,0 +1,44 @@
+services:
+  telemetry:
+    image: hfroger/decidim:0.29
+    command: ""
+    working_dir: /home/module
+    entrypoint: "/home/decidim/bin/entrypoint.sh"
+    volumes:
+      - .:/home/module
+      - .docker/entrypoint.sh:/home/decidim/bin/entrypoint.sh
+      - bundle:/home/decidim/vendor
+      - node_modules:/home/decidim/node_modules
+      # store migration as main image rebuilds everyday with different migrations versions name
+      - migrations:/home/decidim/db/migrate
+    user: root
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://decidim:pleaseChangeMe@telemetry_db:5432/decidim
+      - DATABASE_HOST=telemetry_db
+      - DATABASE_USERNAME=decidim
+      - DATABASE_PASSWORD=pleaseChangeMe
+      - DEV_MODULE=decidim-telemetrys
+      - RAILS_ENV=development
+    depends_on:
+      - telemetry_db
+    ports:
+      - 3000:3000
+      - 9394:9394
+    links:
+      - telemetry_db
+
+  telemetry_db:
+    image: postgres:17
+    volumes:
+      - telemetry-pg-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DATABASE=decidim
+      - POSTGRES_USER=decidim
+      - POSTGRES_PASSWORD=pleaseChangeMe
+
+volumes:
+  node_modules: {}
+  bundle: {}
+  telemetry-pg-data: {}
+  migrations: {}

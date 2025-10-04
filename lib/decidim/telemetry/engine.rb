@@ -1,0 +1,102 @@
+# frozen_string_literal: true
+
+require "yabeda"
+module Decidim
+  module Telemetry
+    class Engine < ::Rails::Engine
+      isolate_namespace Decidim::Telemetry
+      initializer "decidim_telemetry.overrides" do
+        config.to_prepare do
+          Decidim::ApplicationController.include Decidim::Telemetry::Overrides::DecidimApplicationController
+          Decidim::Proposals::VoteProposal.include Decidim::Telemetry::Overrides::DecidimProposalCommand
+        end
+      end
+
+      initializer "decidim_telemetry.configure" do |_app|
+        # Configure from environment variables
+        Decidim::Telemetry.configure do |config|
+          config.sample_rate = ENV.fetch("DECIDIM_TELEMETRY_SAMPLE_RATE", "1.0").to_f
+          config.export_interval = ENV.fetch("DECIDIM_TELEMETRY_EXPORT_INTERVAL", "30").to_i
+          config.username = ENV.fetch("DECIDIM_TELEMETRY_USER", nil)
+          config.password = ENV.fetch("DECIDIM_TELEMETRY_PASSWORD", nil)
+        end
+
+        # Configure Yabeda
+        Yabeda.configure do
+          # Custom Decidim metrics
+          # counter :decidim_requests_total, comment: "Total number of Decidim requests"
+          tags =  [:decidim_tenant, :type, :time_bucket]
+          counter :decidim_activity_per_minute, comment: "Activity rate", tags: tags
+          counter :decidim_registrations, comment: "Participant Registrations", tags: tags
+          counter :decidim_comments, comment: "Comments", tags: tags
+          counter :decidim_comment_votes, comment: "Comment votes", tags: tags
+          counter :decidim_proposals, comment: "Proposals", tags: tags
+          counter :decidim_proposal_votes, comment: "Proposal votes", tags: tags
+          # histogram :decidim_request_duration_seconds, comment: "Decidim request duration in seconds"
+        end
+
+        Yabeda.configure!
+
+        # Subscribe to ActiveJob events
+        Yabeda::ActiveJob.install!
+      end
+
+      initializer "decidim_telemetry.decidim_metrics" do
+        # Subscribe to all decidim.* events
+     
+        ActiveSupport::Notifications.subscribe(/^decidim\./) do |name, event|
+          minutes_per_bucket = Decidim::Telemetry.config.minutes_per_bucket
+          metadatas = { time_bucket: (Time.now.to_i / (minutes_per_bucket * 60)) * (minutes_per_bucket * 60) }
+          Yabeda.decidim_activity_per_minute.increment(type: name, **metadatas)
+
+          case name
+          when /decidim\.events\.core\.welcome_notification/
+            Yabeda.decidim_registrations.increment(
+              **metadatas,
+              decidim_tenant: event[:resource].organization.host
+            )
+          when /decidim\.comments\.comment_created/
+            Yabeda.decidim_comments.increment(
+              **metadatas,
+              decidim_tenant: Decidim::Comments::Comment.find(event[:comment_id]).organization.host
+            )
+          when /decidim\.events\.comments\.comment_upvoted/
+            Yabeda.decidim_comment_votes.increment(
+              **metadatas, 
+              decidim_tenant: event[:resource].organization.host,
+              type: "upvote"
+            )
+          when /decidim\.events\.comments\.comment_downvoted/
+            Yabeda.decidim_comment_votes.increment(
+              **metadatas, 
+              decidim_tenant: event[:resource].organization.host,
+              type: "downvote"
+            )
+          when /decidim\.events\.proposals\.proposal_published/
+            Yabeda.decidim_proposals.increment(
+              **metadatas, 
+              decidim_tenant: event[:resource].organization.host
+            )
+          end
+        end
+      end
+
+      initializer "decidim_telemetry.middleware" do |app|
+        app.middleware.use Decidim::Telemetry::BasicAuth if Decidim::Telemetry.config.enabled? && Decidim::Telemetry.config.basic_auth_enabled?
+      end
+
+      initializer "decidim_telemetry.routes" do
+        Decidim::Core::Engine.routes.prepend do
+          mount Decidim::Telemetry::Engine => "/"
+        end
+      end
+
+      routes do
+        get "/health", to: "health#show"
+        get "/health/ready", to: "health#ready"
+        get "/health/live", to: "health#live"
+        mount Yabeda::Prometheus::Exporter, at: "/metrics"
+      end
+    end
+  end
+end
