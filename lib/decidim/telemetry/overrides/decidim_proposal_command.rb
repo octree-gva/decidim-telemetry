@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Decidim
   module Telemetry
     module Overrides
@@ -17,7 +19,6 @@ module Decidim
             telemetry_decidim_origin_call
           end
         end
-        
       end
     end
   end

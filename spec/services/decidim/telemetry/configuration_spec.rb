@@ -8,13 +8,17 @@ module Decidim
       subject { described_class.new }
 
       describe "#enabled?" do
-        it "returns false by default" do
-          expect(subject.enabled?).to be false
+        it "returns true by default" do
+          expect(subject.enabled?).to be true
         end
 
         it "returns true when enabled" do
           subject.enabled = true
           expect(subject.enabled?).to be true
+        end
+        it "returns false when disabled" do
+          subject.enabled = false
+          expect(subject.enabled?).to be false
         end
       end
 

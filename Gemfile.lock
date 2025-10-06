@@ -18,8 +18,8 @@ PATH
   remote: .
   specs:
     decidim-telemetry (0.1.0)
-      decidim-admin (~> 0.29.5)
-      decidim-comments (~> 0.29.5)
+      decidim-admin (>= 0.29.4)
+      decidim-comments (>= 0.29.4)
       yabeda
       yabeda-activejob
       yabeda-activerecord
@@ -851,8 +851,8 @@ DEPENDENCIES
   bootsnap (~> 1.4)
   brakeman (~> 6.1)
   byebug (~> 11.0)
-  decidim (~> 0.29.5)
-  decidim-dev (~> 0.29.5)
+  decidim (>= 0.29.4)
+  decidim-dev (>= 0.29.4)
   decidim-telemetry!
   deface!
   letter_opener_web (~> 2.0)

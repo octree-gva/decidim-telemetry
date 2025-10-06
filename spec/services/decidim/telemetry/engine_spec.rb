@@ -6,12 +6,6 @@ module Decidim
   module Telemetry
     describe Engine do
       describe "routes" do
-        it "has metrics route" do
-          expect(described_class.routes.recognize_path("/metrics", method: :get)).to eq(
-            controller: "decidim/telemetry/metrics", action: "show"
-          )
-        end
-
         it "has health route" do
           expect(described_class.routes.recognize_path("/health", method: :get)).to eq(
             controller: "decidim/telemetry/health", action: "show"

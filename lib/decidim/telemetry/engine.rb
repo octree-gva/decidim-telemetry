@@ -24,13 +24,13 @@ module Decidim
         # Configure Yabeda
         Yabeda.configure do
           # Custom Decidim metrics
-          tags =  [:decidim_tenant, :type, :time_bucket]
-          counter :decidim_activity_per_minute, comment: "Activity rate", tags: tags
-          counter :decidim_registrations, comment: "Participant Registrations", tags: tags
-          counter :decidim_comments, comment: "Comments", tags: tags
-          counter :decidim_comment_votes, comment: "Comment votes", tags: tags
-          counter :decidim_proposals, comment: "Proposals", tags: tags
-          counter :decidim_proposal_votes, comment: "Proposal votes", tags: tags
+          tags = [:decidim_tenant, :type, :time_bucket]
+          counter(:decidim_activity_per_minute, comment: "Activity rate", tags:)
+          counter(:decidim_registrations, comment: "Participant Registrations", tags:)
+          counter(:decidim_comments, comment: "Comments", tags:)
+          counter(:decidim_comment_votes, comment: "Comment votes", tags:)
+          counter(:decidim_proposals, comment: "Proposals", tags:)
+          counter :decidim_proposal_votes, comment: "Proposal votes", tags:
         end
 
         Yabeda.configure!
@@ -41,7 +41,7 @@ module Decidim
 
       initializer "decidim_telemetry.decidim_metrics" do
         # Subscribe to all decidim.* events
-     
+
         ActiveSupport::Notifications.subscribe(/^decidim\./) do |name, event|
           minutes_per_bucket = Decidim::Telemetry.config.export_interval
           metadatas = { time_bucket: (Time.now.to_i / (minutes_per_bucket * 60)) * (minutes_per_bucket * 60) }
@@ -60,19 +60,19 @@ module Decidim
             )
           when /decidim\.events\.comments\.comment_upvoted/
             Yabeda.decidim_comment_votes.increment(
-              **metadatas, 
+              **metadatas,
               decidim_tenant: event[:resource].organization.host,
               type: "upvote"
             )
           when /decidim\.events\.comments\.comment_downvoted/
             Yabeda.decidim_comment_votes.increment(
-              **metadatas, 
+              **metadatas,
               decidim_tenant: event[:resource].organization.host,
               type: "downvote"
             )
           when /decidim\.events\.proposals\.proposal_published/
             Yabeda.decidim_proposals.increment(
-              **metadatas, 
+              **metadatas,
               decidim_tenant: event[:resource].organization.host
             )
           end
@@ -93,9 +93,7 @@ module Decidim
         get "/health", to: "health#show"
         get "/health/ready", to: "health#ready"
         get "/health/live", to: "health#live"
-        if Decidim::Telemetry.config.enabled? && Decidim::Telemetry.config.mount_exporter?
-          mount Yabeda::Prometheus::Exporter, at: "/metrics"
-        end
+        mount Yabeda::Prometheus::Exporter, at: "/metrics" if Decidim::Telemetry.config.enabled? && Decidim::Telemetry.config.mount_exporter?
       end
     end
   end

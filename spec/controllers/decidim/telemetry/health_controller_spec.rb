@@ -21,6 +21,8 @@ module Decidim
           allow(controller).to receive(:redis_ready?).and_return(true)
           allow(controller).to receive(:yabeda_ready?).and_return(true)
           allow(controller).to receive(:puma_ready?).and_return(true)
+          allow(controller).to receive(:cache_ready?).and_return(true)
+          allow(controller).to receive(:public_files_accessible?).and_return(true)
         end
 
         it "returns ready status when all checks pass" do
@@ -28,7 +30,18 @@ module Decidim
           expect(response).to have_http_status(:ok)
           body = response.parsed_body
           expect(body["status"]).to eq("ready")
-          expect(body["checks"]).to include("database" => true, "redis" => true, "yabeda" => true, "puma" => true)
+          expect(body["checks"]).to include("database" => true, "yabeda" => true, "cache" => true, "public_files_accessibles" => true)
+          expect(body["checks"].keys).not_to include("redis")
+        end
+
+        it "includes redis if REDIS_URL is set" do
+          ENV["REDIS_URL"] = "redis://localhost:6379"
+          get :ready
+          expect(response).to have_http_status(:ok)
+          body = response.parsed_body
+          expect(body["status"]).to eq("ready")
+          expect(body["checks"]).to include("redis" => true)
+          ENV.delete("REDIS_URL")
         end
 
         it "returns not_ready status when database check fails" do
@@ -39,8 +52,8 @@ module Decidim
           expect(body["status"]).to eq("not_ready")
         end
 
-        it "returns not_ready status when puma is not ready" do
-          allow(controller).to receive(:puma_ready?).and_return(false)
+        it "returns not_ready status when cache check fails" do
+          allow(controller).to receive(:cache_ready?).and_return(false)
           get :ready
           expect(response).to have_http_status(:service_unavailable)
           body = response.parsed_body

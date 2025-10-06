@@ -53,10 +53,12 @@ Set the `DECIDIM_TELEMETRY_MOUNT_EXPORTER=false` to export only from the puma po
 
 ## Endpoints
 
-- `GET /metrics` - Prometheus metrics (text/plain)
 - `GET /health` - Health check (application/json)
 - `GET /health/ready` - Readiness probe
 - `GET /health/live` - Liveness probe
+
+If `DECIDIM_TELEMETRY_MOUNT_EXPORTER=true`, you will also have:
+- `GET /metrics` - Prometheus metrics (text/plain)
 
 ## Supported Processes
 
