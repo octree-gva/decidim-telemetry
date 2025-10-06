@@ -3,20 +3,22 @@
 module Decidim
   module Telemetry
     class Configuration
-      attr_accessor :enabled, :sample_rate, :export_interval, :username, :password, :minutes_per_bucket
+      attr_accessor :enabled, :export_interval, :username, :password, :mount_exporter
 
       def initialize
         @enabled = true
-        @sample_rate = 1.0
         @export_interval = 30
         @username = nil
         @password = nil
-        # 1 decidim stat every 15 minutes
-        @minutes_per_bucket = 15
+        @mount_exporter = true
       end
 
       def enabled?
         @enabled
+      end
+
+      def mount_exporter?
+        @mount_exporter
       end
 
       def basic_auth_enabled?

@@ -15,16 +15,15 @@ module Decidim
       initializer "decidim_telemetry.configure" do |_app|
         # Configure from environment variables
         Decidim::Telemetry.configure do |config|
-          config.sample_rate = ENV.fetch("DECIDIM_TELEMETRY_SAMPLE_RATE", "1.0").to_f
-          config.export_interval = ENV.fetch("DECIDIM_TELEMETRY_EXPORT_INTERVAL", "30").to_i
+          config.export_interval = ENV.fetch("DECIDIM_TELEMETRY_EXPORT_INTERVAL", "15").to_i
           config.username = ENV.fetch("DECIDIM_TELEMETRY_USER", nil)
           config.password = ENV.fetch("DECIDIM_TELEMETRY_PASSWORD", nil)
+          config.mount_exporter = ENV.fetch("DECIDIM_TELEMETRY_MOUNT_EXPORTER", "true").to_bool
         end
 
         # Configure Yabeda
         Yabeda.configure do
           # Custom Decidim metrics
-          # counter :decidim_requests_total, comment: "Total number of Decidim requests"
           tags =  [:decidim_tenant, :type, :time_bucket]
           counter :decidim_activity_per_minute, comment: "Activity rate", tags: tags
           counter :decidim_registrations, comment: "Participant Registrations", tags: tags
@@ -32,7 +31,6 @@ module Decidim
           counter :decidim_comment_votes, comment: "Comment votes", tags: tags
           counter :decidim_proposals, comment: "Proposals", tags: tags
           counter :decidim_proposal_votes, comment: "Proposal votes", tags: tags
-          # histogram :decidim_request_duration_seconds, comment: "Decidim request duration in seconds"
         end
 
         Yabeda.configure!
@@ -45,7 +43,7 @@ module Decidim
         # Subscribe to all decidim.* events
      
         ActiveSupport::Notifications.subscribe(/^decidim\./) do |name, event|
-          minutes_per_bucket = Decidim::Telemetry.config.minutes_per_bucket
+          minutes_per_bucket = Decidim::Telemetry.config.export_interval
           metadatas = { time_bucket: (Time.now.to_i / (minutes_per_bucket * 60)) * (minutes_per_bucket * 60) }
           Yabeda.decidim_activity_per_minute.increment(type: name, **metadatas)
 
@@ -95,7 +93,9 @@ module Decidim
         get "/health", to: "health#show"
         get "/health/ready", to: "health#ready"
         get "/health/live", to: "health#live"
-        mount Yabeda::Prometheus::Exporter, at: "/metrics"
+        if Decidim::Telemetry.config.enabled? && Decidim::Telemetry.config.mount_exporter?
+          mount Yabeda::Prometheus::Exporter, at: "/metrics"
+        end
       end
     end
   end

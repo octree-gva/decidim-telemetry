@@ -27,27 +27,29 @@ DECIDIM_TELEMETRY_PASSWORD=your_password
 
 # Telemetry settings
 DECIDIM_TELEMETRY_ENABLED=true
-DECIDIM_TELEMETRY_SAMPLE_RATE=1.0
+DECIDIM_TELEMETRY_EXPORT_INTERVAL=30  # minutes
+DECIDIM_TELEMETRY_MOUNT_EXPORTER=true # Mount in rails server (default)
 ```
 
 ### Initializer
-
+If you prefer to configure telemetry through configuration files,
+setup an initializer:
 ```ruby
 # config/initializers/decidim_telemetry.rb
 Decidim::Telemetry.configure do |config|
   config.enabled = Rails.env.production?
-  config.sample_rate = 1.0
-  config.export_interval = 30 # seconds
+  config.export_interval = 30 # minutes
 end
 ```
 
-[Configure your puma.rb](https://github.com/yabeda-rb/yabeda-puma-plugin?tab=readme-ov-file#on-different-port): 
+[To configure your puma.rb](https://github.com/yabeda-rb/yabeda-puma-plugin?tab=readme-ov-file#on-different-port): 
 ```ruby
 # config/puma.rb
 activate_control_app
 plugin :yabeda
 plugin :yabeda_prometheus
 ``` 
+Set the `DECIDIM_TELEMETRY_MOUNT_EXPORTER=false` to export only from the puma port (default `:9394`)
 
 ## Endpoints
 
