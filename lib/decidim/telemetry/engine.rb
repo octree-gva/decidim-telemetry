@@ -18,7 +18,7 @@ module Decidim
           config.export_interval = ENV.fetch("DECIDIM_TELEMETRY_EXPORT_INTERVAL", "15").to_i
           config.username = ENV.fetch("DECIDIM_TELEMETRY_USER", nil)
           config.password = ENV.fetch("DECIDIM_TELEMETRY_PASSWORD", nil)
-          config.mount_exporter = ENV.fetch("DECIDIM_TELEMETRY_MOUNT_EXPORTER", "true").to_bool
+          config.mount_exporter = ::Decidim::Env.new("DECIDIM_TELEMETRY_MOUNT_EXPORTER", "true").present?
         end
 
         # Configure Yabeda
