@@ -11,11 +11,12 @@ module Decidim
         # Check if application is ready to serve requests
         checks = {
           database: database_ready?,
-          redis: redis_ready?,
           yabeda: yabeda_ready?,
           public_files_accessibles: public_files_accessible?
         }
-
+        
+        checks[:redis] = redis_ready? if Decidim::Env.new("REDIS_URL").present?
+        
         if checks.values.all?
           render json: { status: "ready", checks:, timestamp: Time.current.iso8601 }
         else
