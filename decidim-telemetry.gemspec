@@ -6,7 +6,7 @@ require "decidim/telemetry/version"
 
 Gem::Specification.new do |spec|
   spec.name = "decidim-telemetry"
-  spec.version = Decidim::Telemetry::VERSION
+  spec.version = Decidim::Telemetry.version
   spec.authors = ["Hadrien Froger"]
   spec.email = ["hadrien@octree.ch"]
 

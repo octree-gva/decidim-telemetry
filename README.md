@@ -67,14 +67,6 @@ If `DECIDIM_TELEMETRY_MOUNT_EXPORTER=true`, you will also have:
 
 ## Metrics
 
-### Application Metrics
-- Request count, duration, status codes
-- Registrations, Proposals, Comments and votes.
-
-### Process Metrics
-- Memory usage, CPU usage
-- Worker queue sizes
-- Background job processing rates
 
 ## Development
 
@@ -85,4 +77,4 @@ bundle exec rspec
 
 ## License
 
-APGL-V3
+APGL-V3, see [LICENSE.md](./LICENSE.md)
