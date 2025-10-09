@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.summary = "Observability for Decidim"
   spec.description = "Prometheus endpoint and metrics for Decidim"
   spec.license = "AGPL-3.0"
-  spec.homepage = "https://github.com/decidim-ice/decidim-module-telemetry"
+  spec.homepage = "https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-telemetry"
   spec.required_ruby_version = ">= 3.2.2"
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
