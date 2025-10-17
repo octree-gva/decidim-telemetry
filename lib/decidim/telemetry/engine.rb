@@ -30,7 +30,7 @@ module Decidim
           counter(:decidim_comments, comment: "Comments", tags:)
           counter(:decidim_comment_votes, comment: "Comment votes", tags:)
           counter(:decidim_proposals, comment: "Proposals", tags:)
-          counter :decidim_proposal_votes, comment: "Proposal votes", tags:
+          counter(:decidim_proposal_votes, comment: "Proposal votes", tags:)
         end
 
         Yabeda.configure!
@@ -45,7 +45,8 @@ module Decidim
         ActiveSupport::Notifications.subscribe(/^decidim\./) do |name, event|
           minutes_per_bucket = Decidim::Telemetry.config.export_interval
           metadatas = { time_bucket: (Time.now.to_i / (minutes_per_bucket * 60)) * (minutes_per_bucket * 60) }
-          Yabeda.decidim_activity_per_minute.increment(type: name, **metadatas)
+
+          Yabeda.decidim_activity_per_minute.increment(type: name, decidim_tenant: "unknown", **metadatas)
 
           case name
           when /decidim\.events\.core\.welcome_notification/
