@@ -52,12 +52,14 @@ module Decidim
           when /decidim\.events\.core\.welcome_notification/
             Yabeda.decidim_registrations.increment(
               **metadatas,
-              decidim_tenant: event[:resource].organization.host
+              decidim_tenant: event[:resource].organization.host,
+              type: name
             )
           when /decidim\.comments\.comment_created/
             Yabeda.decidim_comments.increment(
               **metadatas,
-              decidim_tenant: Decidim::Comments::Comment.find(event[:comment_id]).organization.host
+              decidim_tenant: Decidim::Comments::Comment.find(event[:comment_id]).organization.host,
+              type: name
             )
           when /decidim\.events\.comments\.comment_upvoted/
             Yabeda.decidim_comment_votes.increment(
@@ -74,7 +76,8 @@ module Decidim
           when /decidim\.events\.proposals\.proposal_published/
             Yabeda.decidim_proposals.increment(
               **metadatas,
-              decidim_tenant: event[:resource].organization.host
+              decidim_tenant: event[:resource].organization.host,
+              type: name
             )
           end
         end
