@@ -16,6 +16,7 @@ module Decidim
           subject.enabled = true
           expect(subject.enabled?).to be true
         end
+
         it "returns false when disabled" do
           subject.enabled = false
           expect(subject.enabled?).to be false
