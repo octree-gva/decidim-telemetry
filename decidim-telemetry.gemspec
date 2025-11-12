@@ -25,10 +25,10 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "decidim-admin", Decidim::Telemetry::COMPAT_DECIDIM_VERSION
   spec.add_dependency "decidim-comments", Decidim::Telemetry::COMPAT_DECIDIM_VERSION
-  spec.add_dependency "yabeda"
-  spec.add_dependency "yabeda-activejob"
-  spec.add_dependency "yabeda-activerecord"
-  spec.add_dependency "yabeda-prometheus"
-  spec.add_dependency "yabeda-puma-plugin"
-  spec.add_dependency "yabeda-rails"
+  spec.add_dependency "yabeda", ">= 0.14.0"
+  spec.add_dependency "yabeda-activejob", ">= 0.6.0"
+  spec.add_dependency "yabeda-activerecord", ">= 0.1.1"
+  spec.add_dependency "yabeda-prometheus", ">= 0.9.1"
+  spec.add_dependency "yabeda-puma-plugin", ">= 0.8.0"
+  spec.add_dependency "yabeda-rails", ">= 0.10.0"
 end

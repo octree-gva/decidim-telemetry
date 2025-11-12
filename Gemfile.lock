@@ -17,15 +17,15 @@ GIT
 PATH
   remote: .
   specs:
-    decidim-telemetry (0.1.0)
+    decidim-telemetry (0.0.3)
       decidim-admin (>= 0.29.4)
       decidim-comments (>= 0.29.4)
-      yabeda
-      yabeda-activejob
-      yabeda-activerecord
-      yabeda-prometheus
-      yabeda-puma-plugin
-      yabeda-rails
+      yabeda (>= 0.14.0)
+      yabeda-activejob (>= 0.6.0)
+      yabeda-activerecord (>= 0.1.1)
+      yabeda-prometheus (>= 0.9.1)
+      yabeda-puma-plugin (>= 0.8.0)
+      yabeda-rails (>= 0.10.0)
 
 GEM
   remote: https://rubygems.org/
