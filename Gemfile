@@ -18,8 +18,6 @@ gem "decidim-telemetry", path: "."
 gem "bootsnap", "~> 1.4"
 
 gem "puma", ">= 6.3.1"
-# temporary fix for simplecov
-gem "rexml", "3.4.0"
 
 gem "deface",
     git: "https://github.com/froger/deface",
@@ -33,6 +31,8 @@ group :development, :test do
   gem "brakeman", "~> 6.1"
   gem "parallel_tests", "~> 4.2"
   gem "rubocop-rails", "~> 2.25.1"
+  # temporary fix for simplecov
+  gem "rexml", "3.4.0"
 end
 
 group :development do
