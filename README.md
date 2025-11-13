@@ -67,6 +67,15 @@ If `DECIDIM_TELEMETRY_MOUNT_EXPORTER=true`, you will also have:
 
 ## Metrics
 
+- `rack_attack_matches`: Rack Attack matches (eg: "post comments allow2ban")
+- `decidim_activity_per_minute`: Activity rate
+- `decidim_registrations`: Participant Registrations
+- `decidim_comments`: Comments
+- `decidim_comment_votes`: Comment votes
+- `decidim_proposals`: Proposals
+- `decidim_proposal_votes`: Proposal votes
+
+All metrics use tags: decidim_tenant, type, time_bucket.
 
 ## Development
 
