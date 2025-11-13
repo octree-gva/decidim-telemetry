@@ -31,12 +31,27 @@ module Decidim
           counter(:decidim_comment_votes, comment: "Comment votes", tags:)
           counter(:decidim_proposals, comment: "Proposals", tags:)
           counter(:decidim_proposal_votes, comment: "Proposal votes", tags:)
+          counter(:rack_attack_matches, comment: "Rack Attack matches", tags:)
         end
 
         Yabeda.configure!
 
         # Subscribe to ActiveJob events
         Yabeda::ActiveJob.install!
+      end
+
+      initializer "decidim_telemetry.rack_attack" do
+        minutes_per_bucket = Decidim::Telemetry.config.export_interval
+
+        # Subscribe to all rack_attack events (track, throttle, blocklist, etc.)
+        ActiveSupport::Notifications.subscribe(/\.rack_attack$/) do |_name, _start, _finish, _request_id, payload|
+          req = payload[:request]
+          Yabeda.rack_attack_matches.increment(
+            time_bucket: (Time.now.to_i / (minutes_per_bucket * 60)) * (minutes_per_bucket * 60),
+            decidim_tenant: req.env["decidim.current_organization"]&.host || "unknown",
+            type: req.env["rack.attack.matched"].parameterize.underscore
+          )
+        end
       end
 
       initializer "decidim_telemetry.decidim_metrics" do
@@ -53,13 +68,13 @@ module Decidim
             Yabeda.decidim_registrations.increment(
               **metadatas,
               decidim_tenant: event[:resource].organization.host,
-              type: name
+              type: name.parameterize.underscore
             )
           when /decidim\.comments\.comment_created/
             Yabeda.decidim_comments.increment(
               **metadatas,
               decidim_tenant: Decidim::Comments::Comment.find(event[:comment_id]).organization.host,
-              type: name
+              type: name.parameterize.underscore
             )
           when /decidim\.events\.comments\.comment_upvoted/
             Yabeda.decidim_comment_votes.increment(
@@ -77,7 +92,7 @@ module Decidim
             Yabeda.decidim_proposals.increment(
               **metadatas,
               decidim_tenant: event[:resource].organization.host,
-              type: name
+              type: name.parameterize.underscore
             )
           end
         end

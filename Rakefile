@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 require "decidim/dev/common_rake"
+def install_deps(path)
+  Dir.chdir(path) do
+    system("bundle exec rails decidim:update")
+    system("bundle exec rake db:migrate")
+  end
+end
 
 def seed_db(path)
   Dir.chdir(path) do
@@ -11,6 +17,7 @@ end
 desc "Generates a dummy app for testing"
 task test_app: "decidim:generate_external_test_app" do
   ENV["RAILS_ENV"] = "test"
+  install_deps("spec/decidim_dummy_app")
   # replace languages in config/initializers/decidim.rb
   system("sed -i 's/en ca es/en ca es pt-BR/' spec/decidim_dummy_app/config/initializers/decidim.rb")
 end
@@ -30,6 +37,6 @@ task :development_app do
       "en,ca,es,es-MX,pt-BR,fr"
     )
   end
-
+  install_deps("development_app")
   seed_db("development_app")
 end

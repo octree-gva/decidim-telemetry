@@ -12,10 +12,9 @@ require_relative "#{base_path}lib/decidim/telemetry/version"
 
 DECIDIM_VERSION = Decidim::Telemetry::COMPAT_DECIDIM_VERSION
 
+gem "bootsnap", "~> 1.4"
 gem "decidim", DECIDIM_VERSION
 gem "decidim-telemetry", path: "."
-
-gem "bootsnap", "~> 1.4"
 
 gem "puma", ">= 6.3.1"
 
