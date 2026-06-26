@@ -16,7 +16,7 @@ services:
       - DATABASE_HOST=telemetry_db
       - DATABASE_USERNAME=decidim
       - DATABASE_PASSWORD=pleaseChangeMe
-      - DEV_MODULE=decidim-telemetrys
+      - DEV_MODULE=decidim-telemetry
       - RAILS_ENV=development
     depends_on:
       - telemetry_db

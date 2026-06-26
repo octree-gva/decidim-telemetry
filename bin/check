@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# RuboCop + RSpec (matches CI ruby::rubocop, ruby::rspec).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+unset DATABASE_URL
+export RAILS_ENV=test
+bundle exec rubocop .
+bundle exec rspec "$@"

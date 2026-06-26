@@ -15,6 +15,7 @@ module Decidim
       initializer "decidim_telemetry.configure" do |_app|
         # Configure from environment variables
         Decidim::Telemetry.configure do |config|
+          config.enabled = ::Decidim::Env.new("DECIDIM_TELEMETRY_ENABLED", "true").present?
           config.export_interval = ENV.fetch("DECIDIM_TELEMETRY_EXPORT_INTERVAL", "15").to_i
           config.username = ENV.fetch("DECIDIM_TELEMETRY_USER", nil)
           config.password = ENV.fetch("DECIDIM_TELEMETRY_PASSWORD", nil)

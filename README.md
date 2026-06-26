@@ -1,89 +1,35 @@
 # Decidim Telemetry
 
-A monitoring module for Decidim applications that provides OpenTelemetry and Prometheus-compatible endpoints.
+<p align="center">
+  <img src="website/static/img/logo.svg" alt="Decidim Telemetry" width="120" />
+</p>
 
-## Installation
+Prometheus metrics and health probes for Decidim (≥ 0.29.4).
 
-Add to your Gemfile:
+**Documentation:** [octree.ch/decidim-telemetry](https://octree.ch/decidim-telemetry/) — install, scrape config, metrics reference.
+
+## Quick install
+
+1. Add `gem "decidim-telemetry", "~> 0.0"` → `bundle install` (no migrations)
+2. Add Yabeda Puma plugins to `config/puma.rb` — see [Install](https://octree.ch/decidim-telemetry/install)
+3. Set env vars (optional) — see [Configuration](https://octree.ch/decidim-telemetry/configuration)
+4. Point Prometheus at `/metrics` — see [Prometheus](https://octree.ch/decidim-telemetry/prometheus)
+5. Restart Puma
+
+## Host app
 
 ```ruby
-gem 'decidim-telemetry'
+gem "decidim-telemetry", "~> 0.0"
 ```
-
-Run:
 
 ```bash
 bundle install
 ```
 
-## Configuration
+## Development (this gem)
 
-### Environment Variables
-
-```bash
-# Basic Authentication (optional)
-DECIDIM_TELEMETRY_USER=your_username
-DECIDIM_TELEMETRY_PASSWORD=your_password
-
-# Telemetry settings
-DECIDIM_TELEMETRY_ENABLED=true
-DECIDIM_TELEMETRY_EXPORT_INTERVAL=30  # minutes
-DECIDIM_TELEMETRY_MOUNT_EXPORTER=true # Mount in rails server (default)
-```
-
-### Initializer
-If you prefer to configure telemetry through configuration files,
-setup an initializer:
-```ruby
-# config/initializers/decidim_telemetry.rb
-Decidim::Telemetry.configure do |config|
-  config.enabled = Rails.env.production?
-  config.export_interval = 30 # minutes
-end
-```
-
-[To configure your puma.rb](https://github.com/yabeda-rb/yabeda-puma-plugin?tab=readme-ov-file#on-different-port): 
-```ruby
-# config/puma.rb
-activate_control_app
-plugin :yabeda
-plugin :yabeda_prometheus
-``` 
-Set the `DECIDIM_TELEMETRY_MOUNT_EXPORTER=false` to export only from the puma port (default `:9394`)
-
-## Endpoints
-
-- `GET /health` - Health check (application/json)
-- `GET /health/ready` - Readiness probe
-- `GET /health/live` - Liveness probe
-
-If `DECIDIM_TELEMETRY_MOUNT_EXPORTER=true`, you will also have:
-- `GET /metrics` - Prometheus metrics (text/plain)
-
-## Supported Processes
-
-- Puma (master + workers)
-- GoodJob
-
-## Metrics
-
-- `rack_attack_matches`: Rack Attack matches (eg: "post comments allow2ban")
-- `decidim_activity_per_minute`: Activity rate
-- `decidim_registrations`: Participant Registrations
-- `decidim_comments`: Comments
-- `decidim_comment_votes`: Comment votes
-- `decidim_proposals`: Proposals
-- `decidim_proposal_votes`: Proposal votes
-
-All metrics use tags: decidim_tenant, type, time_bucket.
-
-## Development
-
-```bash
-bundle install
-bundle exec rspec
-```
+Docker + `./bin/check` (RuboCop, RSpec) — see [CONTRIBUTING.md](CONTRIBUTING.md) and [Contribute](https://octree.ch/decidim-telemetry/contributing).
 
 ## License
 
-APGL-V3, see [LICENSE.md](./LICENSE.md)
+AGPL-3.0.

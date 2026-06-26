@@ -8,9 +8,10 @@ module Decidim
       end
 
       def call(env)
-        return @app.call(env) unless Decidim::Telemetry.config.basic_auth_enabled?
+        return @app.call(env) unless Decidim::Telemetry.config.enabled? && Decidim::Telemetry.config.basic_auth_enabled?
 
         request = ActionDispatch::Request.new(env)
+        return @app.call(env) unless metrics_path?(request.path)
 
         return unauthorized_response unless request.authorization
 
@@ -25,6 +26,10 @@ module Decidim
       end
 
       private
+
+      def metrics_path?(path)
+        path == "/metrics"
+      end
 
       def valid_credentials?(username, password)
         username == Decidim::Telemetry.config.username &&

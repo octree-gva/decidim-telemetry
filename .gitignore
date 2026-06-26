@@ -6,3 +6,6 @@ coverage
 spec/decidim_dummy_app
 .byebug_history
 .rspec-failures
+website/node_modules
+website/build
+website/.docusaurus

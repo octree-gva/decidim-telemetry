@@ -23,6 +23,12 @@ module Decidim
         end
       end
 
+      describe "#export_interval" do
+        it "defaults to 15 minutes" do
+          expect(subject.export_interval).to eq(15)
+        end
+      end
+
       describe "#basic_auth_enabled?" do
         it "returns false by default" do
           expect(subject.basic_auth_enabled?).to be false

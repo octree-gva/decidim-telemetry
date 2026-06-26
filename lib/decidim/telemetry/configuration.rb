@@ -7,7 +7,7 @@ module Decidim
 
       def initialize
         @enabled = true
-        @export_interval = 30
+        @export_interval = 15
         @username = nil
         @password = nil
         @mount_exporter = true
