@@ -17,15 +17,6 @@ description: Prometheus metrics and health probes for Decidim
 - **Prometheus `/metrics`** — Decidim activity counters, Rack::Attack matches, Yabeda Rails/Puma/ActiveJob metrics
 - **No database migrations** — drop-in gem
 
-## Documentation
-
-| You are… | Read |
-|----------|------|
-| Platform / system administrator | [Install](./install.md) → [Prometheus](./prometheus.md) |
-| Security review | [Security](./security.md) |
-| On-call / troubleshooting | [FAQ](./faq.md) |
-| Gem contributor | [Contribute](./contributing) |
-
 ## Compatibility
 
 | Decidim | Supported |
@@ -37,7 +28,7 @@ description: Prometheus metrics and health probes for Decidim
 
 ```ruby
 # Gemfile
-gem "decidim-telemetry", "~> 0.0"
+gem "decidim-telemetry", "~> 0.0.5"
 ```
 
 ```bash

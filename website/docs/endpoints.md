@@ -28,7 +28,7 @@ All paths are mounted at the **host application root** (same port as Decidim unl
 | `yabeda` | Yabeda configured |
 | `cache` | Rails cache read/write |
 | `public_files_accessibles` | `public/decidim-packs/manifest.json` exists |
-| `redis` | Included only when `REDIS_URL` is set |
+| `redis` | Redis answer to PING. Included only when `REDIS_URL` is set |
 
 Example ready response:
 

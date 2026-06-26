@@ -30,7 +30,7 @@ When `DECIDIM_TELEMETRY_MOUNT_EXPORTER=false`, `/metrics` is **not** served on t
 DECIDIM_TELEMETRY_MOUNT_EXPORTER=false
 ```
 
-Requires the Puma plugins from [Install](./install.md).
+Requires the Puma plugins activation from [Install](./install.md).
 
 ## Initializer (optional)
 
