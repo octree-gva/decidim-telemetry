@@ -6,7 +6,10 @@ Contributor documentation: [octree.ch/decidim-telemetry/contributing](https://oc
 
 - **Doc site (local):** `cd website && yarn && yarn start`
 - **Doc site (build):** `cd website && yarn build`
-- **Tests and lint:** `./bin/check` — RuboCop, RSpec
+- **Local CI (parity with GitLab):**  
+  `docker compose -f docker-compose.ci.yml run --rm rspec bash -lc 'bin/ci-setup && bundle exec rubocop .'`  
+  `docker compose -f docker-compose.ci.yml run --rm rspec`
+- **Dev container check:** `./bin/check` — RuboCop, RSpec (inside `docker compose` service `telemetry`)
 - **GitLab:** [issues](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-telemetry/-/issues) · [merge requests](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-telemetry/-/merge_requests)
 - **Code of conduct:** [octree.ch/decidim-telemetry/code-of-conduct](https://octree.ch/decidim-telemetry/code-of-conduct)
 

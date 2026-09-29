@@ -17,7 +17,7 @@ Install the gem on your **host application**. No migrations are required.
 
 ```ruby
 # Gemfile
-gem "decidim-telemetry", "~> 0.0"
+gem "decidim-telemetry", "~> 0.1"
 ```
 
 ## 2. Bundle

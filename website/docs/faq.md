@@ -44,8 +44,18 @@ No. `bundle install` is enough.
 
 No. Metrics stay on your infrastructure. Prometheus pulls from your app; nothing is pushed outbound by default.
 
+OpenTelemetry only exports when you set `OTEL_*` endpoints and leave `config.open_telemetry.enabled` on — data goes to **your** OTLP collector.
+
+## Traces or logs do not appear
+
+- Confirm `config.open_telemetry.enabled` is true and the feature flags you need (`traces_enabled`, `logs_enabled`) are true
+- Set `OTEL_EXPORTER_OTLP_ENDPOINT` (or specific traces/logs endpoints)
+- Run `bundle exec rake decidim:telemetry:opentelemetry:config` and `:test`
+- Check app logs for `[OpenTelemetry]` messages; set `OTEL_DEBUG=true` for extra warnings
+
 ## See also
 
 - [Endpoints](./endpoints.md)
 - [Configuration](./configuration.md)
+- [OpenTelemetry](./opentelemetry.md)
 - [Prometheus](./prometheus.md)

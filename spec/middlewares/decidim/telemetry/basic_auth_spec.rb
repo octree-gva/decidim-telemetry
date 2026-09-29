@@ -45,7 +45,7 @@ module Decidim
         end
 
         context "when basic auth is enabled" do
-          context "on a non-metrics path" do
+          context "with a non-metrics path" do
             let(:env) do
               {
                 "REQUEST_METHOD" => "GET",

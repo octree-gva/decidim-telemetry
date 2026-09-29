@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email = ["hadrien@octree.ch"]
 
   spec.summary = "Observability for Decidim"
-  spec.description = "Prometheus endpoint and metrics for Decidim"
+  spec.description = "Prometheus metrics, health probes, and OpenTelemetry (traces, logs, exceptions) for Decidim"
   spec.license = "AGPL-3.0"
   spec.homepage = "https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-telemetry"
   spec.required_ruby_version = ">= 3.2.2"
@@ -25,6 +25,11 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "decidim-admin", Decidim::Telemetry::COMPAT_DECIDIM_VERSION
   spec.add_dependency "decidim-comments", Decidim::Telemetry::COMPAT_DECIDIM_VERSION
+  spec.add_dependency "opentelemetry-exporter-otlp"
+  spec.add_dependency "opentelemetry-exporter-otlp-logs"
+  spec.add_dependency "opentelemetry-instrumentation-all"
+  spec.add_dependency "opentelemetry-logs-sdk"
+  spec.add_dependency "opentelemetry-sdk"
   spec.add_dependency "yabeda", ">= 0.14.0"
   spec.add_dependency "yabeda-activejob", ">= 0.6.0"
   spec.add_dependency "yabeda-activerecord", ">= 0.1.1"

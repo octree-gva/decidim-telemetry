@@ -109,6 +109,24 @@ module Decidim
         end
       end
 
+      initializer "decidim_telemetry.open_telemetry", after: :load_config_initializers do
+        otel = Decidim::Telemetry.config.open_telemetry
+        unless otel.enabled?
+          Rails.logger.debug("[OpenTelemetry] Disabled - skipping initialization")
+          next
+        end
+
+        Rails.logger.info("[OpenTelemetry] Enabled - setting up initializer")
+        result = Decidim::Telemetry::OpenTelemetry::Configurator.call
+        if result.ok?
+          Rails.logger.info("[OpenTelemetry] Configuration successful")
+          Rails.application.config.middleware.use Decidim::Telemetry::OpenTelemetry::OtelDecidimContext
+          Rails.logger.info("[OpenTelemetry] Middleware registered")
+        else
+          Rails.logger.error("[OpenTelemetry] Configuration failed: #{result.error}")
+        end
+      end
+
       routes do
         get "/health", to: "health#show"
         get "/health/ready", to: "health#ready"

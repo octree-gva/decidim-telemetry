@@ -22,6 +22,11 @@ Platform administrators installing the gem: [Install](../install.md).
 ## Before you push
 
 ```bash
+# Local CI parity (recommended — matches GitLab ruby::rspec / rubocop)
+docker compose -f docker-compose.ci.yml run --rm rspec bash -lc 'bin/ci-setup && bundle exec rubocop .'
+docker compose -f docker-compose.ci.yml run --rm rspec
+
+# Or via the development compose service
 docker compose up -d
 docker compose run --rm telemetry bash -lc 'cd /home/module && bundle install -j$(nproc) && ./bin/check'
 cd website && yarn && yarn build
@@ -29,8 +34,9 @@ cd website && yarn && yarn build
 
 | Check | Command |
 |-------|---------|
-| All | `./bin/check` (RuboCop, RSpec) |
-| RSpec | `unset DATABASE_URL && RAILS_ENV=test bundle exec rspec` |
+| Local CI RuboCop | `docker compose -f docker-compose.ci.yml run --rm rspec bash -lc 'bin/ci-setup && bundle exec rubocop .'` |
+| Local CI RSpec | `docker compose -f docker-compose.ci.yml run --rm rspec` |
+| Dev all | `./bin/check` (RuboCop, RSpec) |
 | Docs | `cd website && yarn build` |
 
 ## See also
