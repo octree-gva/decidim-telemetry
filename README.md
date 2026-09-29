@@ -31,6 +31,19 @@ bundle install
 
 Docker + checks — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+### Local workflow
+
+```bash
+docker compose up -d
+```
+
+| URL | What |
+|-----|------|
+| http://localhost:8000 | OTEL desktop viewer (traces / logs / metrics) |
+| http://localhost:3029 | Decidim host app |
+
+Sign in on Decidim with the seeded org admin: `admin@example.org` / `decidim123456789` (developer login).
+
 Local CI parity (RuboCop + RSpec, Decidim 0.29 / Ruby 3.2.2):
 
 ```bash

@@ -33,6 +33,10 @@ OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
 OTEL_SERVICE_NAME=decidim-production
 ```
 
+### Local development (Docker)
+
+Dev Compose ships [otel-desktop-viewer](https://github.com/CtrlSpice/otel-desktop-viewer#via-docker). After `docker compose up -d`, open **http://localhost:8000** for traces, logs, and metrics. The `telemetry` service already sets `OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-desktop-viewer:4318`. Exception reports show up as spans (and related log lines under **Logs**). See [Contribute](./developer/contribute.md#local-opentelemetry-viewer).
+
 Service name resolution is **only** `OTEL_SERVICE_NAME`, falling back to `rails-app`. Extra resource attributes use the standard `OTEL_RESOURCE_ATTRIBUTES` env var.
 
 ## Decidim context on spans

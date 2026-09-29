@@ -10,6 +10,7 @@ Contributor documentation: [octree.ch/decidim-telemetry/contributing](https://oc
   `docker compose -f docker-compose.ci.yml run --rm rspec bash -lc 'bin/ci-setup && bundle exec rubocop .'`  
   `docker compose -f docker-compose.ci.yml run --rm rspec`
 - **Dev container check:** `./bin/check` — RuboCop, RSpec (inside `docker compose` service `telemetry`)
+- **Local OTEL UI:** `docker compose up -d` → [http://localhost:8000](http://localhost:8000) (viewer) · Decidim on [http://localhost:3029](http://localhost:3029)
 - **GitLab:** [issues](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-telemetry/-/issues) · [merge requests](https://git.octree.ch/decidim/vocacity/decidim-modules/decidim-telemetry/-/merge_requests)
 - **Code of conduct:** [octree.ch/decidim-telemetry/code-of-conduct](https://octree.ch/decidim-telemetry/code-of-conduct)
 

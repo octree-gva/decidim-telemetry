@@ -1,9 +1,18 @@
+# Dev stack: Decidim module + Postgres + local OpenTelemetry UI.
+#
+# OTEL desktop viewer: https://github.com/CtrlSpice/otel-desktop-viewer#via-docker
+# UI: http://localhost:8000  (traces / logs / metrics)
+# OTLP: http://localhost:4318 (HTTP) · localhost:4317 (gRPC)
+#
+#   docker compose up -d
+#   open http://localhost:8000
+
 services:
   telemetry:
     image: octree/decidim-dev:0.29
-    command: ""
+    command: ["-lc", "sleep infinity"]
     working_dir: /home/module
-    entrypoint: "/home/decidim/bin/entrypoint.sh"
+    entrypoint: ["/bin/bash"]
     volumes:
       - .:/home/module
       - bundle:/home/decidim/vendor
@@ -18,13 +27,22 @@ services:
       - DATABASE_PASSWORD=pleaseChangeMe
       - DEV_MODULE=decidim-telemetry
       - RAILS_ENV=development
+      # Export traces, logs, metrics, and exception spans to otel-desktop-viewer
+      - OTEL_SERVICE_NAME=decidim-telemetry
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-desktop-viewer:4318
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-desktop-viewer:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://otel-desktop-viewer:4318/v1/logs
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://otel-desktop-viewer:4318/v1/metrics
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=otlp
     depends_on:
       - telemetry_db
+      - otel-desktop-viewer
     ports:
-      - 3000:3000
+      - 3029:3000
       - 9394:9394
-    links:
-      - telemetry_db
 
   telemetry_db:
     image: postgres:17
@@ -34,6 +52,16 @@ services:
       - POSTGRES_DATABASE=decidim
       - POSTGRES_USER=decidim
       - POSTGRES_PASSWORD=pleaseChangeMe
+
+  # Local OpenTelemetry explorer (traces, logs, metrics / exception spans)
+  otel-desktop-viewer:
+    image: ghcr.io/ctrlspice/otel-desktop-viewer:latest
+    # Bind all interfaces so the telemetry container can reach OTLP receivers
+    command: ["--host", "0.0.0.0", "--open-browser=false"]
+    ports:
+      - "8000:8000"
+      - "4317:4317"
+      - "4318:4318"
 
 volumes:
   node_modules: {}
