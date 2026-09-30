@@ -10,7 +10,7 @@ Configure telemetry through environment variables (recommended for production) o
 
 **Prerequisite:** [Install](./install.md).
 
-## Environment variables
+## Metrics environment variables
 
 | Name | Required | Default | Description |
 |------|----------|---------|-------------|
@@ -32,19 +32,39 @@ DECIDIM_TELEMETRY_MOUNT_EXPORTER=false
 
 Requires the Puma plugins activation from [Install](./install.md).
 
+## OpenTelemetry environment variables
+
+| Name | Required | Default | Description |
+|------|----------|---------|-------------|
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | no | — | Base OTLP URL; used to derive `/v1/traces` and `/v1/logs` |
+| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` | no | `{base}/v1/traces` | Full traces endpoint |
+| `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` | no | `{base}/v1/logs` | Full logs endpoint |
+| `OTEL_SERVICE_NAME` | no | `rails-app` | Service name on spans and log records |
+| `OTEL_EXPORTER_TIMEOUT` | no | `5` | Exporter timeout in seconds |
+| `OTEL_DEBUG` | no | `false` | Extra stderr warnings on OTEL failures |
+| `OTEL_RESOURCE_ATTRIBUTES` | no | — | Standard SDK resource attributes (e.g. `host.name=…`) |
+
+Full OpenTelemetry setup: [OpenTelemetry](./opentelemetry.md).
+
 ## Initializer (optional)
 
-Use an initializer when env vars are not enough (for example, enable only in production):
+Use an initializer when env vars are not enough:
 
 ```ruby
 # config/initializers/decidim_telemetry.rb
 Decidim::Telemetry.configure do |config|
   config.enabled = Rails.env.production?
   config.export_interval = 15 # minutes
+
+  config.open_telemetry.enabled = true             # master switch
+  config.open_telemetry.traces_enabled = true
+  config.open_telemetry.logs_enabled = true
+  config.open_telemetry.exceptions_enabled = true
+  config.open_telemetry.service_name = ENV.fetch("OTEL_SERVICE_NAME", "rails-app")
 end
 ```
 
-Initializer values override defaults set at boot. Environment variables are applied first; set `config.*` after boot only through this block.
+When `config.open_telemetry.enabled` is `false`, the whole OpenTelemetry module is skipped (no SDK, middleware, logs, or exception subscription).
 
 ## Puma reference
 
@@ -53,5 +73,6 @@ Upstream docs for the Yabeda Puma plugin: [yabeda-puma-plugin](https://github.co
 ## See also
 
 - [Install](./install.md)
+- [OpenTelemetry](./opentelemetry.md)
 - [Prometheus](./prometheus.md)
 - [Security](./security.md)
