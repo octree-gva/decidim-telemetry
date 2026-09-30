@@ -45,6 +45,16 @@ module Decidim
           expect(subject.basic_auth_enabled?).to be false
         end
       end
+
+      describe "#open_telemetry" do
+        it "exposes nested OpenTelemetry configuration" do
+          expect(subject.open_telemetry).to be_a(OpenTelemetry::Configuration)
+          expect(subject.open_telemetry.enabled?).to be true
+          expect(subject.open_telemetry.traces_enabled?).to be true
+          expect(subject.open_telemetry.logs_enabled?).to be true
+          expect(subject.open_telemetry.exceptions_enabled?).to be true
+        end
+      end
     end
   end
 end

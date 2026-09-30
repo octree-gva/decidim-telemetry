@@ -12,5 +12,6 @@ RSpec.configure do |config|
   config.before do
     # Reset configuration before each test
     Decidim::Telemetry.instance_variable_set(:@config, nil)
+    Decidim::Telemetry.opentelemetry_logger_provider = nil
   end
 end
